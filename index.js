@@ -9,7 +9,7 @@ const readFile=(filename)=>{
 			console.error(err);
 			return;
 		}
-		const tasks=data.split("\n")
+		const tasks=JSON.parse(data)
 		resolve(tasks)
 	});
 })
@@ -21,9 +21,9 @@ app.set("view engine","ejs")
 app.set("views",path.join(__dirname, "views"))
 
 app.get("/", (req,res)=>{
-    readFile('Tasks')
+    readFile('tasks.json')
         .then(tasks=>{
-        //console.log(tasks)
+        console.log(tasks)
         res.render("index",{tasks: tasks})
     })
 })  
@@ -31,19 +31,45 @@ app.get("/", (req,res)=>{
 app.use(express.urlencoded({extended: true}))
 
 app.post('/',(req,res)=>{
-    readFile('Tasks')
+    readFile('tasks.json')
         .then(tasks=>{
-        tasks.push(req.body.task)
-        const data=tasks.join("\n")
-        fs.writeFile('Tasks',data,err=>{
+        
+        let index
+        if(tasks.length===0){
+            index=0
+        }
+        else{
+            index=tasks[tasks.length-1].id+1;
+        }
+        const newTask={
+            "id":index,
+            "task":req.body.task
+        }
+        console.log(newTask)
+
+        tasks.push(newTask)
+        console.log(tasks)
+        data=JSON.stringify(tasks, null, 2)
+        console.log(data)
+
+        fs.writeFile('tasks.json',data,"utf8",err=>{
             if(err){
                 console.error(err);
                 return;
+            }
+            else{
+                console.log("saved");
             }
             res.redirect('/')
         })
     })
 })
+
+app.get('/delete-task/:taskId',(req,res)=>{
+    let deletedTaskId=req.params.taskId
+    console.log(deletedTaskId)
+})
+
 
 app.listen(3001,()=>{
     console.log("Example app is started at http//localhost:3001")
