@@ -4,15 +4,27 @@ const fs=require('fs');
 
 const readFile=(filename)=>{
 	return new Promise((resolve, reject)=>{
-	fs.readFile(filename, "utf8", (err,data)=>{
-		if(err){
-			console.error(err);
-			return;
-		}
-		const tasks=JSON.parse(data)
-		resolve(tasks)
-	});
-})
+	    fs.readFile(filename, "utf8", (err,data)=>{
+		    if(err){
+			    console.error(err);
+			    return;
+		    }
+		    const tasks=JSON.parse(data)
+		    resolve(tasks)
+	    });
+    })
+}
+
+const writeFile=(filename)=>{
+	return new Promise((resolve, reject)=>{
+	    fs.writeFile(filename, data, "utf8", err=>{
+		    if(err){
+			    console.error(err);
+			    return;
+		    }
+		    resolve(true)
+	    });
+    })
 }
 
 // use ejs files to prepare templates for view
@@ -45,23 +57,11 @@ app.post('/',(req,res)=>{
             "id":index,
             "task":req.body.task
         }
-        console.log(newTask)
-
         tasks.push(newTask)
-        console.log(tasks)
         data=JSON.stringify(tasks, null, 2)
-        console.log(data)
-
-        fs.writeFile('tasks.json',data,"utf8",err=>{
-            if(err){
-                console.error(err);
-                return;
-            }
-            else{
-                console.log("saved");
-            }
+        writeFile('tasks.json',data)
+        
             res.redirect('/')
-        })
     })
 })
 
@@ -75,13 +75,8 @@ app.get('/delete-task/:taskId',(req,res)=>{
             }
         })
         data=JSON.stringify(tasks,null,2)
-        fs.writeFile('tasks.json',data,"utf8",err=>{
-            if(err){
-                console.error(err);
-                return;
-            }
-            res.redirect('/')
-        })
+        writeFile('tasks.json',data)
+        res.redirect('/')
     })
 })
 

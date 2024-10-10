@@ -1,4 +1,5 @@
-[{
+[
+  {
     "id": 1,
     "task": "Study HTML"
   },
@@ -7,7 +8,7 @@
     "task": "Study CSS"
   },
   {
-    "id": 3,
-    "task": "Study JS"
+    "id": 4,
+    "task": "Post Task"
   }
 ]
