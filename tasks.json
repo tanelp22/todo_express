@@ -1,18 +1,1 @@
-[
-  {
-    "id": 1,
-    "task": "Study PHP"
-  },
-  {
-    "id": 2,
-    "task": "Study JAVA"
-  },
-  {
-    "id": 3,
-    "task": "Study JavaScript"
-  },
-  {
-    "id": 4,
-    "task": "Study HTML"
-  }
-]
+[{"id": 1,"task": "Study PHP"},{"id": 2,"task": "Study JAVA"},{"id": 3,"task": "Study JavaScript"}]

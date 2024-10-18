@@ -10,6 +10,7 @@ const readFile=(filename)=>{
 	    fs.readFile(filename, "utf8", (err,data)=>{
 		    if(err){
 			    console.error(err);
+                reject(err);
 			    return;
 		    }
 		    const tasks=JSON.parse(data)
@@ -23,6 +24,7 @@ const writeFile=(filename)=>{
 	    fs.writeFile(filename, data, "utf8", err=>{
 		    if(err){
 			    console.error(err);
+                reject(err);
 			    return;
 		    }
 		    resolve(true)
@@ -90,7 +92,7 @@ app.get('/delete-task/:taskId',(req,res)=>{
     .then(tasks=>{
         tasks.forEach((task,index)=>{
             if(task.id===deletedTaskId){
-                tasks.splice(index,1)
+                tasks.splice(index,1)   
             }
         })
 
@@ -102,10 +104,20 @@ app.get('/delete-task/:taskId',(req,res)=>{
         writeFile('./tasks.json',data)
         res.redirect('/')
     })
-
-
-
 })
+
+app.get('/reset', (req, res) => {
+    // Overwrite the file content with the string "asdasdasdasd"
+    fs.writeFile('./tasks.json', '[{"id": 1,"task": "Study PHP"},{"id": 2,"task": "Study JAVA"},{"id": 3,"task": "Study JavaScript"}]', (err) => {
+        if (err) {
+            console.error('Error writing to file:', err);
+            return res.status(500).send('Server Error: Could not overwrite file.');
+        }
+        console.log('Reseted Form');
+        res.redirect('/');
+    });
+    
+});
 
 
 app.listen(3001,()=>{
