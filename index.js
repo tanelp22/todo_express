@@ -93,10 +93,18 @@ app.get('/delete-task/:taskId',(req,res)=>{
                 tasks.splice(index,1)
             }
         })
+
+        tasks.forEach((task, index) => {
+            task.id = index + 1;
+        });
+
         data=JSON.stringify(tasks,null,2)
         writeFile('./tasks.json',data)
         res.redirect('/')
     })
+
+
+
 })
 
 
