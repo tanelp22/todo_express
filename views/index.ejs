@@ -23,7 +23,7 @@
                   <%}%>
                   <span class="card-title">Todo List</span>
                   <div class="row">
-                    <form class="col s12" method="post" action"/">
+                    <form class="col s12" method="post" action="/">
                       <div class="row">
                         <div class="input-field col s6">
                           <input placeholder="Task" id="task" type="text" name="task">
@@ -33,30 +33,33 @@
                       <input type="submit" value="Add Task" class="btn">
                       <form><input type="reset" value="Reset Form (0.5sek delay)" class="btn red"  id="resetBtn"></form>
                     </form>
-                   
                   </div>
                 </div>
                 <div class="card-action">
                     <ul class="collection">
-                        <!--<% console.log("started from template")%>
-                        <% console.log(tasks)%>-->
-                        <%tasks.forEach(task=>{%>
-                        <li class="collection-item"><%=task.task%>
-                        <a href="delete-task/<%=task.id%>"class=" secondary-content"><i class="material-icons">delete</i></a>
+                        <% tasks.forEach(task => { %>
+                        <li class="collection-item">
+                            <%= task.task %>
+                            <!-- Delete Link -->
+                            <a href="/delete-task/<%= task.id %>" class="secondary-content">
+                                <i class="material-icons">delete</i>
+                            </a>
+                            <!-- Edit Link -->
+                            <a href="/update-task/<%= task.id %>" class="secondary-content">
+                                <i class="material-icons">edit</i>
+                            </a>
                         </li>
-                        <%})%>
-                      </ul>
+                        <% }) %>
+                    </ul>
                 </div>
               </div>
             </div>
           </div>
     </div>
-  <!-- Compiled and minified JavaScript -->
+    <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>
       document.getElementById("resetBtn").addEventListener("click", function() {
-
-  
           // Send the reset request to the backend
           fetch("/reset", { method: "GET" })
               .then(response => {
@@ -80,8 +83,6 @@
         await waitOneMillisecond(500);
         window.location.reload();
       }
-
-      
   </script>
 </body>
 </html>

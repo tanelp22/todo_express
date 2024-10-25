@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <title>Edit Task</title>
+</head>
+<body>
+    <div class="container">
+        <h3>Edit Task</h3>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="row red lighten-4">
+                <div class="col s12">
+                    <p class="center-align red-text"><%= error %></p>
+                </div>
+            </div>
+        <% } %>
+
+        <form action="/update-task/<%= task.id %>" method="POST">
+            <div class="input-field">
+                <input type="text" name="task" id="task" value="<%= task.task %>">
+                <label for="task" class="active">Task</label>
+            </div>
+            <button type="submit" class="btn">Update Task</button>
+            <a href="/" class="btn grey">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

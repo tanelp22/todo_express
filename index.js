@@ -19,18 +19,18 @@ const readFile=(filename)=>{
     })
 }
 
-const writeFile=(filename)=>{
-	return new Promise((resolve, reject)=>{
-	    fs.writeFile(filename, data, "utf8", err=>{
-		    if(err){
-			    console.error(err);
+const writeFile = (filename, data) => {
+    return new Promise((resolve, reject) => {
+        fs.writeFile(filename, data, "utf8", (err) => {
+            if (err) {
+                console.error(err);
                 reject(err);
-			    return;
-		    }
-		    resolve(true)
-	    });
-    })
-}
+                return;
+            }
+            resolve(true);
+        });
+    });
+};
 
 // use ejs files to prepare templates for view
 const path=require("path")
@@ -106,8 +106,20 @@ app.get('/delete-task/:taskId',(req,res)=>{
     })
 })
 
+app.get('/update-task/:taskId',(req,res)=>{
+    const taskId = parseInt(req.params.taskId);
+    readFile('./tasks.json')
+        .then(tasks => {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) {
+                return res.status(404).send('Task not found');
+            }
+            res.render('edit', { task });
+        })
+        .catch(err => res.status(500).send('Server error: Unable to read tasks.'));
+});
+
 app.get('/reset', (req, res) => {
-    // Overwrite the file content with the string "asdasdasdasd"
     fs.writeFile('./tasks.json', '[{"id": 1,"task": "Study PHP"},{"id": 2,"task": "Study JAVA"},{"id": 3,"task": "Study JavaScript"}]', (err) => {
         if (err) {
             console.error('Error writing to file:', err);
@@ -117,6 +129,48 @@ app.get('/reset', (req, res) => {
         res.redirect('/');
     });
     
+});
+
+app.post('/update-task/:taskId', (req, res) => {
+    const taskId = parseInt(req.params.taskId);
+    const updatedTask = req.body.task.trim();
+
+
+    
+    if (updatedTask.length === 0) {
+        // If task content is empty, re-render edit page with an error message
+        readFile('./tasks.json')
+            .then(tasks => {
+                const task = tasks.find(t => t.id === taskId);
+                if (!task) {
+                    return res.status(404).send('Task not found');
+                }
+                // Render edit page with the error message
+                res.render('edit',{
+                    task,
+                    error: 'Task content cannot be empty' 
+                })
+            })
+            .catch(err => res.status(500).send('Server error: Unable to read tasks.'));
+        return;
+    }
+
+    readFile('./tasks.json')
+        .then(tasks => {
+            const taskIndex = tasks.findIndex(t => t.id === taskId);
+            if (taskIndex === -1) {
+                return res.status(404).send('Task not found');
+            }
+
+            // Update the task
+            tasks[taskIndex].task = updatedTask;
+            const data = JSON.stringify(tasks, null, 2);
+
+            // Write the updated data back to tasks.json
+            return writeFile('./tasks.json', data);
+        })
+        .then(() => res.redirect('/'))
+        .catch(err => res.status(500).send('Server error: Unable to update task.'));
 });
 
 
